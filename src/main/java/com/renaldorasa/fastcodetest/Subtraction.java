@@ -20,6 +20,8 @@ public class Subtraction implements Operation {
 
         if (valueScrambler.getTotalSubtractedValue(firstNum, secondNum) < 0){
 
+            // In case amount is negative it will be displayed as and OWED amount
+
             sterllina *= -1;
             scellini *= -1;;
             pence *= -1;;

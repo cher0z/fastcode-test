@@ -5,9 +5,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValueScrambler {
 
+
+    //Operations to extract single values from the string and the total value for easier calculations
+
     Long getPounds(String value){
         return Long.parseLong(value.substring(0, value.indexOf("p")));
     }
+
 
     Long getShellings(String value){
         return Long.parseLong(value.substring(value.indexOf("p") + 1, value.indexOf("s")));

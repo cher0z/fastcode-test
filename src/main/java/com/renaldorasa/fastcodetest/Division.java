@@ -18,6 +18,8 @@ public class Division implements Operation{
         long scellini = (valueScrambler.getTotalDividedValue(value, divisor) - (sterllina * 240)) / 12;
         long pence = valueScrambler.getTotalDividedValue(value, divisor) - ((sterllina * 240) + (scellini * 12));
 
+        // This is the remainder from the division which is then displayed correctly
+
         long resto = ((valueScrambler.getPounds(value) * 240) + (valueScrambler.getShellings(value) * 12) + valueScrambler.getPence(value))
                 - (valueScrambler.getTotalDividedValue(value, divisor) * Long.parseLong(divisor));
 

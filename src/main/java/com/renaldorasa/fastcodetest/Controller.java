@@ -30,6 +30,8 @@ public class Controller {
     @Qualifier("Division")
     Operation division;
 
+
+
     // Addition method
 
     @RequestMapping(value = "/add/{firstNum}/{secondNum}", method = GET)
@@ -64,6 +66,8 @@ public class Controller {
     @RequestMapping(value = "/multiply/{value}/{multiplier}", method = GET)
     String multiply (@PathVariable("value") String value, @PathVariable("multiplier") String multiplier){
 
+        // The multiplier is checked if it's a proper integer.
+
         if(patternChecker.checkPattern(value) && multiplier.matches("-?(0|[1-9]\\d*)")) {
             return multiplication.doOperation(value, multiplier);
         }
@@ -77,6 +81,8 @@ public class Controller {
 
     @RequestMapping(value = "/divide/{value}/{divider}", method = GET)
     String divide (@PathVariable("value") String value, @PathVariable("divider") String divider){
+
+        // The divider can't be zero
 
         if(patternChecker.checkPattern(value) && divider.matches("-?(0|[1-9]\\d*)")) {
             if(Long.parseLong(divider) != 0)

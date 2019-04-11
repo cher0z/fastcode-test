@@ -19,6 +19,9 @@ public class Multiplication implements Operation {
         long pence = valueScrambler.getTotalMultipliedValue(value, multiplier) - ((sterllina * 240) + (scellini* 12));
 
         if(Long.parseLong(multiplier) < 0){
+
+            // In case amount is negative it will be displayed as and OWED amount
+
             sterllina *= -1;
             scellini *= -1;;
             pence *= -1;;
