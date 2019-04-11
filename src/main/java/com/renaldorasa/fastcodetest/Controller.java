@@ -1,5 +1,7 @@
 package com.renaldorasa.fastcodetest;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -8,90 +10,83 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @RestController
 @RequestMapping("/api")
 public class Controller {
-    
+
+    @Autowired
+    PatternChecker patternChecker;
+
+    @Autowired
+    @Qualifier("Addition")
+    Operation addition;
+
+    @Autowired
+    @Qualifier("Subtraction")
+    Operation subtraction;
+
+    @Autowired
+    @Qualifier("Multiplication")
+    Operation multiplication;
+
+    @Autowired
+    @Qualifier("Division")
+    Operation division;
 
     // Addition method
 
-    @RequestMapping(value = "/add/{sterllina1}/{scellini1}/{pence1}/{sterllina2}/{scellini2}/{pence2}", method = GET)
-    String add (@PathVariable("sterllina1") Long sterllina1, @PathVariable("scellini1") Long scellini1, @PathVariable("pence1") Long pence1,
-                           @PathVariable("sterllina2") Long sterllina2, @PathVariable("scellini2") Long scellini2, @PathVariable("pence2") Long pence2){
+    @RequestMapping(value = "/add/{firstNum}/{secondNum}", method = GET)
+    String add (@PathVariable("firstNum") String firstNum, @PathVariable("secondNum") String secondNum){
 
-        long totalValue = ((sterllina1 + sterllina2) * 240) + ((scellini1 + scellini2) * 12) + (pence1 + pence2);
-        long sterllina = totalValue / 240;
-        long scellini = (totalValue - (sterllina * 240)) / 12;
-        long pence = totalValue - ((sterllina * 240) + (scellini* 12));
-
-
-        return String.format("(%d sterlinne + %d scellini + %d pennies) + (%d sterlinne + %d scellini + %d pennies) = %d sterlinne + %d scellini + %d pennies",
-                sterllina1, scellini1, pence1, sterllina2, scellini2, pence2, sterllina, scellini, pence);
+        if(patternChecker.checkPattern(firstNum) && patternChecker.checkPattern(secondNum)) {
+            return addition.doOperation(firstNum, secondNum);
+        }
+        else{
+            return "INCORRECT FORMAT USE XpXsXd";
+        }
     }
 
 
 
     // Subtraction method
 
-    @RequestMapping(value = "/subtract/{sterllina1}/{scellini1}/{pence1}/{sterllina2}/{scellini2}/{pence2}", method = GET)
-    String subtract (@PathVariable("sterllina1") Long sterllina1, @PathVariable("scellini1") Long scellini1, @PathVariable("pence1") Long pence1,
-                           @PathVariable("sterllina2") Long sterllina2, @PathVariable("scellini2") Long scellini2, @PathVariable("pence2") Long pence2){
+    @RequestMapping(value = "/subtract/{firstNum}/{secondNum}", method = GET)
+    String subtract (@PathVariable("firstNum") String firstNum, @PathVariable("secondNum") String secondNum){
 
-        long totalValue = ((sterllina1 * 240) + (scellini1 * 12) + pence1) - ((sterllina2 * 240) + (scellini2 * 12) + pence2);
-        long sterllina = totalValue / 240;
-        long scellini = (totalValue - (sterllina * 240)) / 12;
-        long pence = totalValue - ((sterllina * 240) + (scellini* 12));
-
-        if (totalValue < 0){
-            sterllina *= -1;
-            scellini *= -1;;
-            pence *= -1;;
-
-            return String.format("(%d sterlinne + %d scellini + %d pennies) - (%d sterlinne + %d scellini + %d pennies) = %d sterlinne  %d scellini  %d pennies (OWED)",
-                    sterllina1, scellini1, pence1, sterllina2, scellini2, pence2, sterllina, scellini, pence);
+        if(patternChecker.checkPattern(firstNum) && patternChecker.checkPattern(secondNum)) {
+            return subtraction.doOperation(firstNum, secondNum);
         }
-        else {
-            return String.format("(%d sterlinne + %d scellini + %d pennies) - (%d sterlinne + %d scellini + %d pennies) = %d sterlinne  %d scellini  %d pennies",
-                    sterllina1, scellini1, pence1, sterllina2, scellini2, pence2, sterllina, scellini, pence);
+        else{
+            return "INCORRECT FORMAT USE /XpXsXd/YpYsYd";
         }
     }
 
 
     // Multiplication method
 
-    @RequestMapping(value = "/multiply/{sterllina1}/{scellini1}/{pence1}/{multiplicant}", method = GET)
-    String multiply (@PathVariable("sterllina1") Long sterllina1, @PathVariable("scellini1") Long scellini1, @PathVariable("pence1") Long pence1,
-                     @PathVariable("multiplicant") Long multiplicant) {
+    @RequestMapping(value = "/multiply/{value}/{multiplier}", method = GET)
+    String multiply (@PathVariable("value") String value, @PathVariable("multiplier") String multiplier){
 
-        long totalValue = ((sterllina1 * 240) + (scellini1 * 12) + pence1) * multiplicant;
-        long sterllina = totalValue / 240;
-        long scellini = (totalValue - (sterllina * 240)) / 12;
-        long pence = totalValue - ((sterllina * 240) + (scellini* 12));
-
-        return String.format("(%d sterlinne + %d scellini + %d pennies) * %d = %d sterlinne  %d scellini  %d pennies",
-                    sterllina1, scellini1, pence1, multiplicant, sterllina, scellini, pence);
+        if(patternChecker.checkPattern(value) && multiplier.matches("-?(0|[1-9]\\d*)")) {
+            return multiplication.doOperation(value, multiplier);
+        }
+        else{
+            return "INCORRECT FORMAT USE /XpXsXd/N";
+        }
     }
 
 
     // Division method
 
-    @RequestMapping(value = "/divide/{sterllina1}/{scellini1}/{pence1}/{divisor}", method = GET)
-    String divide (@PathVariable("sterllina1") Long sterllina1, @PathVariable("scellini1") Long scellini1, @PathVariable("pence1") Long pence1, @PathVariable("divisor") Long divisor) {
-        if( divisor != 0) {
+    @RequestMapping(value = "/divide/{value}/{divider}", method = GET)
+    String divide (@PathVariable("value") String value, @PathVariable("divider") String divider){
 
-            long totalValue = ((sterllina1 * 240) + (scellini1 * 12) + pence1) / divisor;
-            long resto = ((sterllina1 * 240) + (scellini1 * 12) + pence1) - (totalValue * divisor);
-
-            long sterllina = totalValue / 240;
-            long scellini = (totalValue - (sterllina * 240)) / 12;
-            long pence = totalValue - ((sterllina * 240) + (scellini * 12));
-
-            long sterllinaResto = resto / 240;
-            long scelliniResto = (resto - (sterllinaResto * 240)) / 12;
-            long penceResto = resto - ((sterllinaResto * 240) + (scelliniResto * 12));
-
-            return String.format("(%d sterlinne + %d scellini + %d pennies) / %d = %d sterlinne  %d scellini  %d pennies (%d sterlinne  %d scellini %d pennies)",
-                    sterllina1, scellini1, pence1, divisor, sterllina, scellini, pence, sterllinaResto, scelliniResto, penceResto);
+        if(patternChecker.checkPattern(value) && divider.matches("-?(0|[1-9]\\d*)")) {
+            if(Long.parseLong(divider) != 0)
+                return division.doOperation(value, divider);
+            else {
+                return "DIVISION BY ZERO NOT ALLOWED";
+            }
         }
-        else {
-            return "CAN'T DIVIDE BY ZERO";
+        else{
+            return "INCORRECT FORMAT, USE /XpXsXd/N ";
         }
     }
 }
